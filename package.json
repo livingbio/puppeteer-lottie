@@ -45,5 +45,8 @@
     "puppeteer": "^2.1.1",
     "sprintf-js": "^1.1.2",
     "tempy": "^0.3.0"
+  },
+  "peerDependencies": {
+    "lottie-web": "livingbio/lottie-web"
   }
 }
