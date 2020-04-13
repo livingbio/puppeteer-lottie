@@ -13,14 +13,6 @@ const { sprintf } = require('sprintf-js')
 
 const { cssifyObject } = require('css-in-js-utils')
 
-const lottieScript = fs.readFileSync(path.join(__dirname, 'lib', 'lottie.min.js'), 'utf8')
-
-const injectLottie = `
-<script>
-  ${lottieScript}
-</script>
-`
-
 /**
  * Renders the given Lottie animation via Puppeteer.
  *
@@ -78,13 +70,22 @@ module.exports = async (opts) => {
     gifskiOptions = {
       quality: 80,
       fast: false
-    }
+    },
+    lottiePath = path.resolve('node_modules/lottie-web/build/player/lottie.min.js')
   } = opts
 
   let {
     width = undefined,
     height = undefined
   } = opts
+
+  const lottieScript = fs.readFileSync(lottiePath, 'utf8')
+
+  const injectLottie = `
+  <script>
+    ${lottieScript}
+  </script>
+  `
 
   ow(output, ow.string.nonEmpty, 'output')
   ow(deviceScaleFactor, ow.number.integer.positive, 'deviceScaleFactor')
