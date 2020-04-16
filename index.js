@@ -13,6 +13,13 @@ const { sprintf } = require('sprintf-js')
 
 const { cssifyObject } = require('css-in-js-utils')
 
+function defaultsToExisted (...filepathGetters) {
+  for (let getter of filepathGetters) {
+    const fp = getter()
+    if (fp && fs.existsSync(fp)) return fp
+  }
+}
+
 /**
  * Renders the given Lottie animation via Puppeteer.
  *
@@ -46,8 +53,10 @@ const { cssifyObject } = require('css-in-js-utils')
  * @param {string} [opts.inject.style] - Optionally injected into a <style> tag within the document <head>
  * @param {string} [opts.inject.body] - Optionally injected into the document <body>
  * @param {object} [opts.browser] - Optional puppeteer instance to reuse
- * @param {string} [opts.rootdir] - Set the directory containing node_modules in which lottie-web is installed, defaults to cwd
- * @param {string} [opts.pagedir] - Optional directory containing the generated html file
+ * @param {string} [opts.rootDir] - Set the directory containing node_modules in which lottie-web is installed, defaults to cwd
+ * @param {string} [opts.sourceDir] - Optional directory in which the generated html file will be saved
+ * @param {string} [opts.sourceLottiePath] - Optional path to lottie script
+ * @param {string} [opts.htmlFilename] - Optional filename to generated html file, defaults to index.html
  *
  * @return {Promise}
  */
@@ -72,29 +81,35 @@ module.exports = async (opts) => {
     gifskiOptions = {
       quality: 80,
       fast: false
-    },
-    rootdir = path.resolve()
+    }
   } = opts
 
-  const { lottiePath = path.resolve(
-    rootdir,
-    'node_modules/lottie-web/build/player/lottie.min.js'
-  ) } = opts
+  const htmlFilename = opts.htmlFilename || 'index.html'
+  const rootDir = opts.rootDir || path.resolve()
+  const sourceDir = opts.sourceDir || tempy.directory()
 
-  const { pagedir = tempy.directory() } = opts
+  let sourceLottiePath = defaultsToExisted(
+    () => opts.sourceLottiePath,
+    () => path.resolve(sourceDir, 'lottie.min.js'),
+    () => path.resolve(sourceDir, 'lottie.js'),
+    () => path.resolve(rootDir, 'lottie.min.js'),
+    () => path.resolve(rootDir, 'lottie.js'),
+    () => path.resolve(rootDir, 'node_modules/lottie-web/build/player/lottie.min.js')
+  )
+
+  const lottieFilename = path.basename(sourceLottiePath)
+  const targetLottiePath = path.resolve(sourceDir, lottieFilename)
+
+  if (!fs.existsSync(targetLottiePath)) {
+    fs.copyFileSync(sourceLottiePath, targetLottiePath)
+  }
 
   let {
     width = undefined,
     height = undefined
   } = opts
 
-  const lottieScript = fs.readFileSync(lottiePath, 'utf8')
-
-  const injectLottie = `
-  <script>
-    ${lottieScript}
-  </script>
-  `
+  const injectLottie = `<script src="${lottieFilename}"> </script>`
 
   ow(output, ow.string.nonEmpty, 'output')
   ow(deviceScaleFactor, ow.number.integer.positive, 'deviceScaleFactor')
@@ -245,7 +260,7 @@ ${inject.body || ''}
 </html>
 `
 
-  const htmlPath = path.resolve(pagedir, 'index.html')
+  const htmlPath = path.resolve(sourceDir, htmlFilename)
   fs.writeFileSync(htmlPath, html)
 
   const spinnerB = !quiet && ora('Loading browser').start()
