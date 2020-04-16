@@ -71,8 +71,15 @@ module.exports = async (opts) => {
       quality: 80,
       fast: false
     },
-    lottiePath = path.resolve('node_modules/lottie-web/build/player/lottie.min.js')
+    rootdir = path.resolve()
   } = opts
+
+  const { lottiePath = path.resolve(
+    rootdir,
+    'node_modules/lottie-web/build/player/lottie.min.js'
+  ) } = opts
+
+  const { pagedir = tempy.directory() } = opts
 
   let {
     width = undefined,
@@ -236,8 +243,8 @@ ${inject.body || ''}
 </html>
 `
 
-  // useful for testing purposes
-  // fs.writeFileSync('test.html', html)
+  const htmlPath = path.resolve(pagedir, 'index.html')
+  fs.writeFileSync(htmlPath, html)
 
   const spinnerB = !quiet && ora('Loading browser').start()
 
@@ -256,7 +263,7 @@ ${inject.body || ''}
     width,
     height
   })
-  await page.setContent(html)
+  await page.goto('file:///' + htmlPath)
   await page.waitForSelector('.ready')
   const duration = await page.evaluate(() => duration)
   const numFrames = await page.evaluate(() => numFrames)
