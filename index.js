@@ -46,6 +46,8 @@ const { cssifyObject } = require('css-in-js-utils')
  * @param {string} [opts.inject.style] - Optionally injected into a <style> tag within the document <head>
  * @param {string} [opts.inject.body] - Optionally injected into the document <body>
  * @param {object} [opts.browser] - Optional puppeteer instance to reuse
+ * @param {string} [opts.rootdir] - Set the directory containing node_modules in which lottie-web is installed, defaults to cwd
+ * @param {string} [opts.pagedir] - Optional directory containing the generated html file
  *
  * @return {Promise}
  */
