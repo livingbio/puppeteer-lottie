@@ -4909,7 +4909,7 @@ loose-envify@^1.0.0, loose-envify@^1.4.0:
 
 lottie-web@livingbio/lottie-web:
   version "5.6.7"
-  resolved "https://codeload.github.com/livingbio/lottie-web/tar.gz/f9e0096991675c65d75e68e1b81fe8093a5936ff"
+  resolved "https://codeload.github.com/livingbio/lottie-web/tar.gz/7ce8f6147af76a8794ef198188a44ca6df0ed938"
 
 loud-rejection@^1.0.0, loud-rejection@^1.2.0:
   version "1.6.0"

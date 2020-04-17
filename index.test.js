@@ -45,6 +45,24 @@ test('bodymovin.json => single frame jpg scale=640:-1', async (t) => {
   await fs.remove(output)
 })
 
+test('bodymovin.json => single frame jpg inside sourceDir', async (t) => {
+  const sourceDir = tempy.directory()
+  const output = tempy.file({ extension: 'jpg' })
+
+  await renderLottie({
+    path: bodymovin,
+    quiet: true,
+    output,
+    sourceDir,
+    htmlFilename: 'test.html'
+  })
+
+  t.truthy(fs.existsSync(output))
+  t.truthy(fs.existsSync(path.resolve(sourceDir, 'test.html')))
+
+  await fs.remove(output)
+})
+
 test('bodymovin.json => png frames scale=-1:100', async (t) => {
   const temp = tempy.directory()
   const output = path.join(temp, 'frame-%d.png')
