@@ -240,7 +240,7 @@ ${inject.body || ''}
       container: document.getElementById('root'),
       renderer: '${renderer}',
       loop: false,
-      autoplay: false,
+      autoplay: true,
       rendererSettings: ${JSON.stringify(rendererSettings)},
       animationData
     })
