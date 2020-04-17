@@ -125,3 +125,15 @@ test('bodymovin.json => mp4', async (t) => {
 
   await fs.remove(output)
 })
+
+test('error out when lottie script not found', async (t) => {
+  const output = tempy.file({ extension: 'jpg' })
+
+  await t.throwsAsync(() => renderLottie({
+    path: bodymovin,
+    quiet: true,
+    width: 640,
+    output,
+    rootDir: path.dirname(output)
+  }), { name: 'LottieScriptNotFoundError' })
+})

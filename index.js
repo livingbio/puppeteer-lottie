@@ -14,10 +14,16 @@ const { sprintf } = require('sprintf-js')
 const { cssifyObject } = require('css-in-js-utils')
 
 function defaultsToExisted (...filepathGetters) {
+  const filepaths = []
   for (let getter of filepathGetters) {
     const fp = getter()
     if (fp && fs.existsSync(fp)) return fp
+    if (fp) filepaths.push(fp)
   }
+
+  const e = new Error('No existed files')
+  e.filepaths = filepaths
+  throw e
 }
 
 /**
@@ -88,14 +94,23 @@ module.exports = async (opts) => {
   const rootDir = opts.rootDir || path.resolve()
   const sourceDir = opts.sourceDir || tempy.directory()
 
-  let sourceLottiePath = defaultsToExisted(
-    () => opts.sourceLottiePath,
-    () => path.resolve(sourceDir, 'lottie.min.js'),
-    () => path.resolve(sourceDir, 'lottie.js'),
-    () => path.resolve(rootDir, 'lottie.min.js'),
-    () => path.resolve(rootDir, 'lottie.js'),
-    () => path.resolve(rootDir, 'node_modules/lottie-web/build/player/lottie.min.js')
-  )
+  let sourceLottiePath
+  try {
+    sourceLottiePath = defaultsToExisted(
+      () => opts.sourceLottiePath,
+      () => path.resolve(sourceDir, 'lottie.min.js'),
+      () => path.resolve(sourceDir, 'lottie.js'),
+      () => path.resolve(rootDir, 'lottie.min.js'),
+      () => path.resolve(rootDir, 'lottie.js'),
+      () => path.resolve(rootDir, 'node_modules/lottie-web/build/player/lottie.min.js')
+    )
+  } catch ({ filepaths }) {
+    const msg = 'Cannot find lottie script from any of the following paths: \n'
+    const e = new Error(msg + filepaths.join('\n'))
+    e.name = 'LottieScriptNotFoundError'
+    e.filepaths = filepaths
+    throw e
+  }
 
   const lottieFilename = path.basename(sourceLottiePath)
   const targetLottiePath = path.resolve(sourceDir, lottieFilename)
