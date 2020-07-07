@@ -22,7 +22,7 @@ If you want to generate **GIFs**, you must also install [gifski](https://gif.ski
 brew install gifski
 ```
 
-If you want to generate **MP4s** or **Webms**, you must also install [ffmpeg](https://ffmpeg.org/). On macOS, you can run:
+If you want to generate **MP4s** or **WebMs**, you must also install [ffmpeg](https://ffmpeg.org/). On macOS, you can run:
 
 ```bash
 brew install ffmpeg
