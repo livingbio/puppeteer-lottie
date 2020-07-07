@@ -41,7 +41,7 @@ await renderLottie({
 
 // Create a transparent WebM from a lottie animation
 await renderLottie({
-  path: 'fixtures/bodymovin.json',
+  path: 'fixtures/cycle-animation.json',
   output: 'example.webm'
 })
 
