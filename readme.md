@@ -1,6 +1,6 @@
 # puppeteer-lottie
 
-> Renders [Lottie](http://airbnb.io/lottie) animations via [Puppeteer](https://github.com/GoogleChrome/puppeteer) to **image**, **GIF** or **MP4**.
+> Renders [Lottie](http://airbnb.io/lottie) animations via [Puppeteer](https://github.com/GoogleChrome/puppeteer) to **image**, **GIF**, **WebM** or **MP4**.
 
 [![NPM](https://img.shields.io/npm/v/puppeteer-lottie.svg)](https://www.npmjs.com/package/puppeteer-lottie) [![Build Status](https://travis-ci.com/transitive-bullshit/puppeteer-lottie.svg?branch=master)](https://travis-ci.com/transitive-bullshit/puppeteer-lottie) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -22,7 +22,7 @@ If you want to generate **GIFs**, you must also install [gifski](https://gif.ski
 brew install gifski
 ```
 
-If you want to generate **MP4s**, you must also install [ffmpeg](https://ffmpeg.org/). On macOS, you can run:
+If you want to generate **MP4s** or **Webms**, you must also install [ffmpeg](https://ffmpeg.org/). On macOS, you can run:
 
 ```bash
 brew install ffmpeg
@@ -37,6 +37,12 @@ const renderLottie = require('puppeteer-lottie')
 await renderLottie({
   path: 'fixtures/bodymovin.json',
   output: 'example.mp4'
+})
+
+// Create a transparent WebM from a lottie animation
+await renderLottie({
+  path: 'fixtures/bodymovin.json',
+  output: 'example.webm'
 })
 
 // Create a GIF with width 640px from a lottie animation
