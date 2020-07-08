@@ -423,7 +423,7 @@ ${inject.body || ''}
     // eslint-disable-next-line no-undef
     await page.evaluate((frame) => animation.goToAndStop(frame, true), frame)
     const screenshot = await rootHandle.screenshot({
-      path: (isMp4 || isWebm || isMov) ? undefined : frameOutputPath,
+      path: (isApng || isMp4 || isWebm || isMov) ? undefined : frameOutputPath,
       ...screenshotOpts
     })
 
