@@ -156,10 +156,11 @@ module.exports = async (opts) => {
   const isGif = (ext === 'gif')
   const isMp4 = (ext === 'mp4')
   const isWebm = (ext === 'webm')
+  const isMov = (ext === 'mov')
   const isPng = (ext === 'png')
   const isJpg = (ext === 'jpg' || ext === 'jpeg')
 
-  if (!(isApng || isGif || isMp4 || isWebm || isPng || isJpg)) {
+  if (!(isApng || isGif || isMp4 || isWebm || isMov || isPng || isJpg)) {
     throw new Error(`Unsupported output format "${output}"`)
   }
 
@@ -168,7 +169,7 @@ module.exports = async (opts) => {
     ? path.join(tempDir, 'frame-%012d.png')
     : output
   const frameType = (isJpg ? 'jpeg' : 'png')
-  const isMultiFrame = isApng || isMp4 || isWebm || /%d|%\d{2,3}d/.test(tempOutput)
+  const isMultiFrame = isApng || isMp4 || isWebm || isMov || /%d|%\d{2,3}d/.test(tempOutput)
 
   let lottieData = animationData
 
@@ -322,7 +323,7 @@ ${inject.body || ''}
   let ffmpeg
   let ffmpegStdin
 
-  if (isApng || isMp4 || isWebm) {
+  if (isApng || isMp4 || isWebm || isMov) {
     ffmpegP = new Promise((resolve, reject) => {
       const ffmpegArgs = [
         '-v', 'error',
@@ -373,6 +374,14 @@ ${inject.body || ''}
         )
       }
 
+      if (isMov) {
+        ffmpegArgs.push(
+          '-f', 'image2pipe', '-c:v', 'png', '-r', `${fps}`, '-i', '-',
+          '-c:v', 'qtrle',
+          '-pix_fmt', 'argb'
+        )
+      }
+
       ffmpegArgs.push(
         '-frames:v', `${numOutputFrames}`,
         '-an', output
@@ -414,7 +423,7 @@ ${inject.body || ''}
     // eslint-disable-next-line no-undef
     await page.evaluate((frame) => animation.goToAndStop(frame, true), frame)
     const screenshot = await rootHandle.screenshot({
-      path: (isMp4 || isWebm) ? undefined : frameOutputPath,
+      path: (isMp4 || isWebm || isMov) ? undefined : frameOutputPath,
       ...screenshotOpts
     })
 
@@ -423,7 +432,7 @@ ${inject.body || ''}
       break
     }
 
-    if (isApng || isMp4 || isWebm) {
+    if (isApng || isMp4 || isWebm || isMov) {
       if (ffmpegStdin.writable) {
         ffmpegStdin.write(screenshot)
       }
@@ -441,7 +450,7 @@ ${inject.body || ''}
     spinnerR.succeed()
   }
 
-  if (isApng || isMp4 || isWebm) {
+  if (isApng || isMp4 || isWebm || isMov) {
     let file = ''
     if (isApng) {
       file = 'animated png'
@@ -449,6 +458,8 @@ ${inject.body || ''}
       file = 'mp4'
     } else if (isWebm) {
       file = 'webm'
+    } else if (isMov) {
+      file = 'mov'
     }
     const spinnerF = !quiet && ora(`Generating ${file} with FFmpeg`).start()
 
