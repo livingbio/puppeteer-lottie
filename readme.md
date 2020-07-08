@@ -1,6 +1,6 @@
 # puppeteer-lottie
 
-> Renders [Lottie](http://airbnb.io/lottie) animations via [Puppeteer](https://github.com/GoogleChrome/puppeteer) to **image**, **GIF**, **APNG**, **MP4** or **WebM**.
+> Renders [Lottie](http://airbnb.io/lottie) animations via [Puppeteer](https://github.com/GoogleChrome/puppeteer) to **image**, **GIF**, **APNG**, **MP4**, **WebM** or **MOV**.
 
 [![NPM](https://img.shields.io/npm/v/puppeteer-lottie.svg)](https://www.npmjs.com/package/puppeteer-lottie) [![Build Status](https://travis-ci.com/transitive-bullshit/puppeteer-lottie.svg?branch=master)](https://travis-ci.com/transitive-bullshit/puppeteer-lottie) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -22,7 +22,7 @@ If you want to generate **GIFs**, you must also install [gifski](https://gif.ski
 brew install gifski
 ```
 
-If you want to generate **APNGs**, **MP4s** or **WebMs**, you must also install [ffmpeg](https://ffmpeg.org/). On macOS, you can run:
+If you want to generate **APNGs**, **MP4s**, **WebMs** or **MOVs**, you must also install [ffmpeg](https://ffmpeg.org/). On macOS, you can run:
 
 ```bash
 brew install ffmpeg
@@ -49,6 +49,12 @@ await renderLottie({
 await renderLottie({
   path: 'fixtures/cycle-animation.json',
   output: 'example.webm'
+})
+
+// Create a transparent MOV from a lottie animation
+await renderLottie({
+  path: 'fixtures/cycle-animation.json',
+  output: 'example.mov'
 })
 
 // Create a GIF with width 640px from a lottie animation
